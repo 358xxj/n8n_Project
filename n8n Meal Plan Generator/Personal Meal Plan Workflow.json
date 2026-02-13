@@ -1,0 +1,630 @@
+{
+  "name": "Personal Meal Plan Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "sendTo": "={{ $('Limit User Data').item.json['Your Email '] }}",
+        "subject": "=Weekly Meal Plan ({{ $('Codes Format Meal Plan').item.json.WeekPeriod }}) - {{ $('Limit User Data').item.json['Your Name '] }}",
+        "message": "=Hi,\n\n🎯 Your personalized 7-day meal plan is now ready!  \nAttached is your Week meal plan. Hope you enjoy delicious food! \n\n- n8n",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        816
+      ],
+      "id": "91b8f231-f26d-457f-ac2f-d823388d444e",
+      "name": "Send a message",
+      "webhookId": "b2652d38-47c0-4d17-8405-97777f7838ce",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "l2h91PuLwWWwD48e",
+          "name": "n8n Meal Plan Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "193gEUG421nph3Xgex-Gy39VZfhIznk57FnukIqfG6zs",
+          "mode": "list",
+          "cachedResultName": "n8n Meal Plan Template",
+          "cachedResultUrl": "https://docs.google.com/document/d/193gEUG421nph3Xgex-Gy39VZfhIznk57FnukIqfG6zs/edit?usp=drivesdk"
+        },
+        "name": "Weekly Meal Plan",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -16,
+        816
+      ],
+      "id": "455ee1ea-f296-4062-ad01-f0c7f23c8336",
+      "name": "Copy file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "lAJRqp7KyGNfpgeE",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.documentId }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf",
+              "drawingsToFormat": "application/pdf",
+              "slidesToFormat": "application/pdf",
+              "sheetsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        272,
+        816
+      ],
+      "id": "4b68e075-c1fc-471a-9fba-d3b77a59e846",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "lAJRqp7KyGNfpgeE",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Step 1: Input User Data \n",
+        "height": 240,
+        "width": 576,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        -192
+      ],
+      "id": "ef153738-0193-412a-a8a6-042556bd366d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "Timestamp",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        112,
+        -112
+      ],
+      "id": "78bee212-7028-499d-a337-7cd358f1f183",
+      "name": "Sort User Data Based on Time"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1CyP-v-P5hHkAZEkAXC02yFscYWe_DI4NjGoiztW607A",
+          "mode": "list",
+          "cachedResultName": "Meal Preferences & Nutrition Intake Form  (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CyP-v-P5hHkAZEkAXC02yFscYWe_DI4NjGoiztW607A/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1406901362,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1CyP-v-P5hHkAZEkAXC02yFscYWe_DI4NjGoiztW607A/edit#gid=1406901362"
+        },
+        "event": "rowAdded",
+        "options": {
+          "valueRender": "FORMATTED_VALUE"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -112
+      ],
+      "id": "d0ae10ac-185c-4e93-8273-4858f0d7b659",
+      "name": "User Input Data",
+      "alwaysOutputData": false,
+      "notesInFlow": false,
+      "executeOnce": false,
+      "retryOnFail": false,
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "anrztcRFQVXQij5N",
+          "name": "n8n Meal Plan Generator"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.8
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        32,
+        288
+      ],
+      "id": "12467cc1-082f-40f5-82b7-47c1163d5077",
+      "name": "Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "MXs9oxtU95P0rl5u",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Step 2: Generate Meal Plan\n",
+        "height": 256,
+        "width": 576,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        96
+      ],
+      "id": "33b2d49f-6674-4e43-98eb-c4a56eb4a560",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Step 4: Send the Meal Plan\n",
+        "height": 288,
+        "width": 592,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        736
+      ],
+      "id": "9131b7e8-1dfa-4077-85dc-8c3156b989d3",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Explanations\n\n### Step 1 Input User Data\n- **Google Sheet Node**: A sheet links to a meal plan preferences Google Form. Stored user data.\n\n- **Sort**: Sort all the users input from the Google Sheet node and order them with TimeStamp the time updated) in descending order\n\n- **Limit**: Limit to get only 1 (the newest one) data row from Google sheet to process\n\n- **Week Tag**: Codes to help to generate week periods for the plan, which are convenient for users to catch up\n\n\n### Step 2 Generate Meal Plan\n- **AI Agent**: AI agent with Google Gemini chat model to generate weekly meal plan details\n\n- **Code Format Meal Plan**: To structured the contents from AI agent to make it look better in the document\n\n\n### Step 3 Generate Recipes\n- **AI Agent**: AI agent with Google Gemini chat model to generate recipes and shopping list\n\n- **Code Format Recipes**: To structured the contents from AI agent to make it look better in the document\n\n\n### Step 4 Send the Meal Plan\n- **Copy file (Google Drive)**: Since we have the meal plan template in the google drive, we use this node to to copy the template to pass it to the next step to fill in user information\n\n- **Update a document (Google Doc)**: Update user input to template \n\n- **Download file**: Convert and download the google doc meal plan file to pdf for user\n\n- **Send a message (Gmail)**: Send the finalized meal plan to user with message and subject",
+        "height": 960,
+        "width": 464
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -192
+      ],
+      "id": "4cfc70e4-4887-4489-89ff-a1dd0c15fa83",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $json.id }}",
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "replaceAll",
+              "text": "{{Name}}",
+              "replaceText": "={{ $('Limit User Data').item.json['Your Name '] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{Email}}",
+              "replaceText": "={{ $('Limit User Data').item.json['Your Email '] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{Career}}",
+              "replaceText": "={{ $('Limit User Data').item.json['Your Career '] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{DietType}}",
+              "replaceText": "={{ $('Limit User Data').item.json['What Type of Diet Do You Follow? '] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{Allergies}}",
+              "replaceText": "={{ $('Limit User Data').item.json['Do you have any food allergies or intolerances? '] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{Restrictions}}",
+              "replaceText": "={{ $('Limit User Data').item.json['Do you have any restrictions? '] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{Dislike}}",
+              "replaceText": "={{ $('Limit User Data').item.json['Foods you dislike'] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{Favorite}}",
+              "replaceText": "={{ $('Limit User Data').item.json['Favorite Cuisines'] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{Time}}",
+              "replaceText": "={{ $('Limit User Data').item.json['How Much Time Do You Have To Cook Daily? '] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{Budget}}",
+              "replaceText": "={{ $('Limit User Data').item.json['Budget Per Week For Groceries'] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{Notes}}",
+              "replaceText": "={{ $('Limit User Data').item.json['Anything Else We Should Know?'] }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{WeeklySchedule}}",
+              "replaceText": "={{ $('Codes Format Meal Plan').item.json.WeeklySchedule }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{PlanSummary}}",
+              "replaceText": "={{ $('Codes Format Meal Plan').item.json.PlanSummary }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{Recipes}}",
+              "replaceText": "={{ $('Code Format Recipes').item.json.RecipesText }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{ShoppingLists}}",
+              "replaceText": "={{ $('Code Format Recipes').item.json.ShoppingListText }}"
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{WeekPeriod}}",
+              "replaceText": "={{ $('Codes Format Meal Plan').item.json.WeekPeriod }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        128,
+        816
+      ],
+      "id": "90515000-ad52-4ee8-b9e5-d8229772fea6",
+      "name": "Update a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "YyTcwEQN71EtDfS7",
+          "name": "n8n Meal Plan Template"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a registered-dietitian-level recipe generator. Create simple, budget-conscious recipes\nfor each meal in a 7-day plan. Respect allergies, restrictions, diet type, disliked foods, time\nlimits, and budget.\n\nUser profile:\n- Name: {{ $('Limit User Data').item.json['Your Name '] }}\n- Career/Lifestyle: {{ $('Limit User Data').item.json['Your Career '] }}\n- Diet Type: {{ $('Limit User Data').item.json['What Type of Diet Do You Follow? '] }}\n- Allergies: {{ $('Limit User Data').item.json['Do you have any food allergies or intolerances? '] }}\n- Restrictions: {{ $('Limit User Data').item.json['Do you have any restrictions? '] }}\n- Dislikes: {{ $('Limit User Data').item.json['Foods you dislike'] }}\n- Favorite Cuisines: {{ $('Limit User Data').item.json['Favorite Cuisines'] }}\n- Cooking Time per day: {{ $('Limit User Data').item.json['How Much Time Do You Have To Cook Daily? '] }}\n- Budget per week: {{ $('Limit User Data').item.json['Budget Per Week For Groceries'] }}\n\nMeals to convert into recipes (JSON array):\n{{ $json.WeeklySchedule }}\n\nRules:\n- US measurements (cups, tbsp, tsp, oz, lb; °F).\n- 6–10 ingredients per recipe. Pantry staples allowed (salt, pepper, oil).\n- Keep steps to 4–8, each step ≤ 18 words.\n- Include approximate time (prep, cook) and total calories per serving (rough).\n- Avoid allergens, restrictions, and disliked items.\n- If any meal is “—”, skip it.\n\nReturn ONLY valid JSON matching this schema:\n\n{\n  \"days\": [\n    {\n      \"day\": \"Monday\",\n      \"meals\": [\n        {\n          \"slot\": \"breakfast|lunch|dinner|snacks\",\n          \"title\": \"name\",\n          \"ingredients\": [{\"item\":\"\", \"qty\":\"\", \"unit\":\"\"}],\n          \"steps\": [\"\", \"\"],\n          \"prepMinutes\": 10,\n          \"cookMinutes\": 15,\n          \"caloriesPerServing\": 420,\n          \"servings\": 1\n        }\n      ]\n    }\n  ],\n  \"shoppingList\": [\n    {\"aisle\":\"Produce\",\"items\":[{\"item\":\"spinach\",\"qty\":\"6\",\"unit\":\"oz\"}]},\n    {\"aisle\":\"Protein\",\"items\":[{\"item\":\"chicken breast\",\"qty\":\"1\",\"unit\":\"lb\"}]}\n  ]\n}\n\n\n\nAdditional rules:\n- When regenerating recipes for a similar plan, vary the ingredients,\n  flavor profile, and cooking method.\n- Do not reuse exactly the same recipe titles as before for this user.\n",
+        "options": {
+          "systemMessage": "You must output STRICT, valid JSON only. No commentary, no code fences.\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        32,
+        464
+      ],
+      "id": "267abf04-4cd5-421e-ac7b-d6b4363e6360",
+      "name": "AI Agent Recipes"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "==Create a simple 7-day meal plan (breakfast, lunch, dinner, snacks) honoring:\n- Name: {{ $json['Your Name '] }}\n- Career/Lifestyle: {{ $json['Your Career '] }}\n- Diet Type: {{ $json['What Type of Diet Do You Follow? '] }}\n- Allergies: {{ $json['Do you have any food allergies or intolerances? '] }}\n- Restrictions: {{ $json['Do you have any restrictions? '] }}\n- Dislike Food (optional): {{ $json['Foods you dislike'] }}\n- Favorite Cuisines: {{ $json['Favorite Cuisines'] }}\n- Cooking Time: {{ $json['How Much Time Do You Have To Cook Daily? '] }}\n- Budget: {{ $json['Budget Per Week For Groceries'] }}\n- Anything Else (optional): {{ $json['Anything Else We Should Know?'] }}\n\nWeek period (already decided by the system, DO NOT CHANGE IT):\n{{ $json.weekPeriod }}\n\nYou MUST copy this exact string into the \"weekPeriod\" field in your JSON output.\n\nOutput JSON (JavaScript Object Notation) with this schema:\n{\n  \"weekPeriod\": \"string like '2025-11-18 to 2025-11-24'\",\n  \"summary\": \"1-3 sentence overview tailored to user and a short paragraph to explain reasons why generate those food for user meal plan\",\n  \"days\": [\n    {\"day\": \"Monday\", \"breakfast\": \"\", \"lunch\": \"\", \"dinner\": \"\", \"snacks\": \"\"},\n    {\"day\": \"Tuesday\", \"breakfast\": \"\", \"lunch\": \"\", \"dinner\": \"\", \"snacks\": \"\"},\n    {\"day\": \"Wednesday\", \"breakfast\": \"\", \"lunch\": \"\", \"dinner\": \"\", \"snacks\": \"\"},\n    {\"day\": \"Thursday\", \"breakfast\": \"\", \"lunch\": \"\", \"dinner\": \"\", \"snacks\": \"\"},\n    {\"day\": \"Friday\", \"breakfast\": \"\", \"lunch\": \"\", \"dinner\": \"\", \"snacks\": \"\"},\n    {\"day\": \"Saturday\", \"breakfast\": \"\", \"lunch\": \"\", \"dinner\": \"\", \"snacks\": \"\"},\n    {\"day\": \"Sunday\", \"breakfast\": \"\", \"lunch\": \"\", \"dinner\": \"\", \"snacks\": \"\"}\n  ]\n}\n\nAdditional rules:\n- If the user requests more than once with similar or same profile, generate a\n  noticeably different weekly menu each time.\n- Rotate cuisines, change cooking methods, and avoid repeating exactly the\n  same dish names as previous plans for this user.\n",
+        "options": {
+          "systemMessage": "You are a nutrition planning assistant.\n\nAlways return valid JSON (JavaScript Object Notation) that matches the schema.\n\n\nStyle rules for dish names:\n- Keep names short and vivid (3–6 words).\n- Avoid repeating the same adjectives too often.\n- Do NOT add emojis; styling will be handled later.\n\n\nVERY IMPORTANT:\n- The \"weekPeriod\" field MUST exactly equal the given string in the prompt.\n- Do NOT invent or change dates.\n- No commentary, no code fences, JSON only.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        32,
+        144
+      ],
+      "id": "c847aa38-4b7e-40e2-9177-4bbfaf46515a",
+      "name": "AI Agent Meal Plan"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Reads from AI Agent node. In your flow the AI text is at $.output\nconst raw = $json.output ?? $json;  // adjust if needed\n\nfunction extractJson(maybe) {\n  if (typeof maybe !== 'string') return maybe;\n  let s = maybe.trim()\n    .replace(/^```(?:json)?/i, '')   // strip ```json\n    .replace(/```$/,'')              // strip trailing ```\n    .trim();\n  // try direct parse\n  try { return JSON.parse(s); } catch (e) {}\n  // fallback: grab first {...} block\n  const i = s.indexOf('{'); const j = s.lastIndexOf('}');\n  if (i !== -1 && j !== -1 && j > i) {\n    const candidate = s.slice(i, j + 1);\n    try { return JSON.parse(candidate); } catch (e) {}\n  }\n  throw new Error('AI output is not valid JSON');\n}\n\nconst obj = extractJson(raw);\n\n// Validate minimal schema\nif (!obj || typeof obj.summary !== 'string' || !Array.isArray(obj.days)) {\n  throw new Error('Missing \"summary\" or \"days\" array in AI JSON');\n}\n\n// Use weekPeriod from AI if present, otherwise from previous node\nconst weekPeriod = String(obj.weekPeriod || $json.weekPeriod || '').trim();\n\n// Normalize days and fill missing keys\nconst order = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];\nconst byDay = Object.fromEntries((obj.days || []).map(d => [String(d.day || '').trim(), d]));\nconst normDays = order.map(d => {\n  const v = byDay[d] || {};\n  const clean = k => (v[k] == null || String(v[k]).trim() === '') ? '—' : String(v[k]).trim();\n  return {\n    day: d,\n    breakfast: clean('breakfast'),\n    lunch: clean('lunch'),\n    dinner: clean('dinner'),\n    snacks: clean('snacks'),\n  };\n});\n\n// 🎨 Emoji-styled plain text for Google Docs\nconst headerLine = '════════════════════════════════════';\nconst WeeklySchedule =\n  `Week: ${weekPeriod || 'This Week'}\\n${headerLine}\\n\\n` +\n  normDays.map(d =>\n`${d.day}  🌟\n🥣 Breakfast: ${d.breakfast}\n🥗 Lunch: ${d.lunch}\n🍽️ Dinner: ${d.dinner}\n🍇 Snacks: ${d.snacks}\n`).join('\\n\\n');\n\n// 🔵 Colored HTML version (for future HTML email or web use)\nconst esc = s => String(s).replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));\n\n// soft tag color helpers\nconst pill = (text) =>\n  `<span style=\"display:inline-block;padding:4px 12px;border-radius:999px;background:#e0f2fe;color:#0f172a;font-size:13px;font-weight:600;\">${esc(text)}</span>`;\n\nconst WeeklyScheduleHTML =\n  `<div style=\"font-family:system-ui,-apple-system,Segoe UI,sans-serif;font-size:14px;color:#0f172a;\">\n    <div style=\"margin-bottom:12px;font-size:13px;color:#334155;\">\n      <strong style=\"text-transform:uppercase;letter-spacing:0.06em;font-size:11px;color:#64748b;\">Week Period</strong><br/>\n      <span style=\"font-weight:600;color:#0f766e;\">${esc(weekPeriod || 'This Week')}</span>\n    </div>\n    ${normDays.map(d => `\n      <div style=\"border-radius:12px;border:1px solid #e2e8f0;padding:10px 12px;margin-bottom:8px;background:#f8fafc;\">\n        ${pill(d.day)}\n        <ul style=\"list-style:none;padding-left:0;margin:8px 0 0 0;\">\n          <li style=\"margin:2px 0;\"><span style=\"font-weight:600;\">🥣 Breakfast:</span> <span style=\"color:#0f172a;\">${esc(d.breakfast)}</span></li>\n          <li style=\"margin:2px 0;\"><span style=\"font-weight:600;\">🥗 Lunch:</span> <span style=\"color:#0f172a;\">${esc(d.lunch)}</span></li>\n          <li style=\"margin:2px 0;\"><span style=\"font-weight:600;\">🍽️ Dinner:</span> <span style=\"color:#0f172a;\">${esc(d.dinner)}</span></li>\n          <li style=\"margin:2px 0;\"><span style=\"font-weight:600;\">🍇 Snacks:</span> <span style=\"color:#0f172a;\">${esc(d.snacks)}</span></li>\n        </ul>\n      </div>`).join('')}\n  </div>`;\n\n// Output for downstream nodes\nreturn [{\n  WeekPeriod: weekPeriod,\n  PlanSummary: String(obj.summary || '').trim(),\n  WeeklySchedule,\n  WeeklyScheduleHTML,\n  DaysArray: normDays,\n  DaysArrayJSON: JSON.stringify(normDays)\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        336,
+        144
+      ],
+      "id": "7a6d5894-6d25-4c73-ac77-a11439d87cc3",
+      "name": "Codes Format Meal Plan"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============= Helper: robust JSON (JavaScript Object Notation) parsing =============\nfunction parseJson(s) {\n  if (typeof s !== 'string') return s;\n  const t = s.trim().replace(/^```(?:json)?/i,'').replace(/```$/,'').trim();\n  return JSON.parse(t);\n}\n\n// ============= Input & basic validation ============================================\nconst data = parseJson($json.output ?? $json);\nif (!data || !Array.isArray(data.days) || !Array.isArray(data.shoppingList)) {\n  throw new Error('Recipes JSON missing \"days\" or \"shoppingList\"');\n}\n\n// ============= Formatting helpers ==================================================\nconst DAY_ORDER = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];\nconst SLOT_ORDER = ['breakfast','lunch','dinner','snacks'];\n\nconst slotLabel = (s) => {\n  const m = String(s||'').toLowerCase();\n  if (m === 'breakfast') return '🍳 Breakfast';\n  if (m === 'lunch')     return '🥗 Lunch';\n  if (m === 'dinner')    return '🍽️ Dinner';\n  return '🍇 Snacks';\n};\n\nconst tidy = (v) => String(v ?? '').toString().replace(/\\s+/g,' ').trim();\nconst safeJoin = (arr, sep = ', ') => (arr || []).map(tidy).filter(Boolean).join(sep);\n\nfunction fmtQty(qty, unit) {\n  const q = tidy(qty);\n  const u = tidy(unit);\n  if (!q && !u) return '';\n  if (!q) return u;\n  if (!u) return q;\n  return `${q} ${u}`;\n}\n\nfunction sectionDivider() {\n  return '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';\n}\nfunction subDivider() {\n  return '────────────────────────────────────';\n}\nfunction blank(n=1){ return '\\n'.repeat(n); }\n\n// ============= Normalize & sort days/meals ========================================\nconst daysSorted = [...data.days].sort(\n  (a,b) => DAY_ORDER.indexOf(a.day) - DAY_ORDER.indexOf(b.day)\n).map(d => ({\n  day: d.day,\n  meals: [...(d.meals||[])].sort(\n    (a,b) => SLOT_ORDER.indexOf(String(a.slot||'').toLowerCase()) -\n             SLOT_ORDER.indexOf(String(b.slot||'').toLowerCase())\n  )\n}));\n\n// ============= Render RecipesText (plain, template-friendly) ======================\nlet RecipesText = '';\n\nRecipesText += '🥘 Weekly Recipes Overview\\n';\nRecipesText += sectionDivider() + blank(2);\n\nfor (const d of daysSorted) {\n  // Day heading\n  RecipesText += `📅 ${d.day}\\n${subDivider()}${blank()}`;\n\n  for (const r of (d.meals || [])) {\n    const title = tidy(r.title);\n    if (!title) continue; // skip empty meals\n\n    const slot = slotLabel(r.slot);\n    const prep = Number.isFinite(+r.prepMinutes) ? `${r.prepMinutes} min` : '—';\n    const cook = Number.isFinite(+r.cookMinutes) ? `${r.cookMinutes} min` : '—';\n    const servings = r.servings ? String(r.servings) : '—';\n    const kcal = r.caloriesPerServing ? String(r.caloriesPerServing) : '—';\n\n    // Recipe title line\n    RecipesText += `${slot}: ${title}\\n`;\n    RecipesText += `⏱ Time: prep ${prep}, cook ${cook}  |  🍽 Servings: ${servings}  |  🔥 ~${kcal} kcal/serving\\n`;\n\n    // Ingredients\n    const ings = (r.ingredients || [])\n      .map(ing => {\n        const item = tidy(ing.item);\n        if (!item) return '';\n        const q = fmtQty(ing.qty, ing.unit);\n        return q ? `• ${item} — ${q}` : `• ${item}`;\n      })\n      .filter(Boolean);\n\n    if (ings.length) {\n      RecipesText += blank() + '🧾 Ingredients:\\n';\n      RecipesText += ings.join('\\n') + blank();\n    }\n\n    // Steps\n    const steps = (r.steps || []).map(s => tidy(s)).filter(Boolean);\n    if (steps.length) {\n      RecipesText += '👣 Steps:\\n';\n      RecipesText += steps.map((s,i)=> `${i+1}. ${s}`).join('\\n') + blank();\n    }\n\n    // Spacer between recipes\n    RecipesText += blank();\n  }\n\n  // Extra space after each day\n  RecipesText += blank();\n}\n\n// Trim trailing whitespace\nRecipesText = RecipesText.trimEnd();\n\n// ============= Consolidate & render ShoppingListText ==============================\n// Build a map: aisle -> itemKey -> { item, qtyTotal, unit, rawList[] }\nconst aisleMap = new Map();\n\nfor (const group of (data.shoppingList || [])) {\n  const aisle = tidy(group.aisle) || 'Other';\n  if (!aisleMap.has(aisle)) aisleMap.set(aisle, new Map());\n\n  for (const it of (group.items || [])) {\n    const itemName = tidy(it.item);\n    if (!itemName) continue;\n\n    const unit = tidy(it.unit);\n    const qtyStr = tidy(it.qty);\n    const qtyNum = qtyStr && !isNaN(Number(qtyStr)) ? Number(qtyStr) : null;\n\n    const key = `${itemName.toLowerCase()}|${unit.toLowerCase()}`;\n    const bucket = aisleMap.get(aisle);\n\n    if (!bucket.has(key)) {\n      bucket.set(key, {\n        item: itemName,\n        unit,\n        qtyTotal: qtyNum ?? null,\n        raw: qtyStr ? [qtyStr] : []\n      });\n    } else {\n      const rec = bucket.get(key);\n      if (qtyNum !== null && rec.qtyTotal !== null) {\n        rec.qtyTotal += qtyNum;\n      } else {\n        rec.qtyTotal = null;\n      }\n      if (qtyStr) rec.raw.push(qtyStr);\n    }\n  }\n}\n\n// Sort aisles alphabetically; then items alphabetically\nconst aislesSorted = [...aisleMap.keys()].sort((a,b)=> a.localeCompare(b));\n\nlet ShoppingListText = '🛒 Shopping List (Grouped by Aisle)\\n' + sectionDivider() + blank(2);\n\nfor (const aisle of aislesSorted) {\n  ShoppingListText += `📍 ${aisle}\\n`;\n\n  const items = [...aisleMap.get(aisle).values()]\n    .sort((a,b)=> a.item.localeCompare(b.item));\n\n  for (const rec of items) {\n    let qtyOut = '';\n    if (rec.qtyTotal !== null) {\n      qtyOut = rec.unit ? `${rec.qtyTotal} ${rec.unit}` : String(rec.qtyTotal);\n    } else if (rec.raw.length) {\n      qtyOut = rec.unit\n        ? `${safeJoin(rec.raw, ' + ')} ${rec.unit}`\n        : safeJoin(rec.raw, ' + ');\n    }\n\n    ShoppingListText += qtyOut\n      ? `• ${rec.item} — ${qtyOut}\\n`\n      : `• ${rec.item}\\n`;\n  }\n\n  ShoppingListText += blank(); // space after each aisle\n}\n\n// Trim extras\nShoppingListText = ShoppingListText.trimEnd();\n\n// ============= Output for downstream Google Docs replaceAll =======================\nreturn [{\n  RecipesText,\n  ShoppingListText\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        352,
+        464
+      ],
+      "id": "e8e2997c-073f-4ba3-8e0d-d9405003fd15",
+      "name": "Code Format Recipes"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.8
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        32,
+        608
+      ],
+      "id": "5a4a9fe8-cb2e-4489-b9de-4df4abb18b5c",
+      "name": "Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "MXs9oxtU95P0rl5u",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Step 3: Generate Recipes\n",
+        "height": 272,
+        "width": 592,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        400
+      ],
+      "id": "b33c5096-1973-4b2d-960e-3f7a722da1fb",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -112
+      ],
+      "id": "18e7fadc-e836-4254-b156-b02550ccb032",
+      "name": "Limit User Data"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate week tag + week period based on *today*\n\nconst now = new Date();\n\n// Week start = today\nconst start = new Date(now);\n// Week end = 6 days after start (7-day window)\nconst end = new Date(now);\nend.setDate(end.getDate() + 6);\n\nfunction fmtDate(d) {\n  const y = d.getFullYear();\n  const m = String(d.getMonth() + 1).padStart(2, '0');\n  const day = String(d.getDate()).padStart(2, '0');\n  return `${y}-${m}-${day}`;\n}\n\nconst weekStartDate = fmtDate(start);\nconst weekEndDate = fmtDate(end);\nconst weekPeriod = `${weekStartDate} to ${weekEndDate}`;\n\n// Optional style tag (you can keep or change these)\nconst styles = [\n  'Mediterranean focus',\n  'High-protein quick meals',\n  'Comfort food with lighter twists',\n  'Asian-inspired flavors',\n  'Mexican-inspired and spicy'\n];\nconst styleTag = styles[Math.floor(Math.random() * styles.length)];\n\n// Simple label for debugging / tagging\nconst weekTag = `Week-${weekStartDate}`;\n\n// This will be merged into the same item that goes into AI Agent Meal Plan\nreturn [{\n  weekTag,\n  styleTag,\n  weekStartDate,\n  weekEndDate,\n  weekPeriod\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        -112
+      ],
+      "id": "9b505175-274e-4065-a624-91872876d64f",
+      "name": "Generate Week Tag"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Copy file": {
+      "main": [
+        [
+          {
+            "node": "Update a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort User Data Based on Time": {
+      "main": [
+        [
+          {
+            "node": "Limit User Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User Input Data": {
+      "main": [
+        [
+          {
+            "node": "Sort User Data Based on Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent Meal Plan",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent Recipes": {
+      "main": [
+        [
+          {
+            "node": "Code Format Recipes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent Meal Plan": {
+      "main": [
+        [
+          {
+            "node": "Codes Format Meal Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Codes Format Meal Plan": {
+      "main": [
+        [
+          {
+            "node": "AI Agent Recipes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code Format Recipes": {
+      "main": [
+        [
+          {
+            "node": "Copy file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent Recipes",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit User Data": {
+      "main": [
+        [
+          {
+            "node": "Generate Week Tag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Week Tag": {
+      "main": [
+        [
+          {
+            "node": "AI Agent Meal Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6a513249-f9e4-493a-bb0f-2428f5d34f7f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cd3b133f428b306008410b0c58510bc42876eedbf2750b5857db14fe79c41e33"
+  },
+  "id": "IiySWJLFyV29LjlZ",
+  "tags": []
+}
